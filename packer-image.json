@@ -1,0 +1,43 @@
+{
+  "variables": {
+      "openstack_identity_endpoint": "https://iadosvip01.ece.ellucian.com:5000/v3",
+      "openstack_tenant_name": "webapps-project",
+      "openstack_username": "sunilka",
+      "openstack_password": "Citrix#24041988"
+    },
+
+  "provisioners": [
+    {
+      "type": "ansible",
+      "playbook_file": "./packer-deployment/packer-automate.yml",
+      "user": "centos",
+      "extra_arguments": [ "-vvvv" ]
+    }
+   ],
+
+  "builders":  [
+   
+     {
+      "type": "openstack",
+      "identity_endpoint": "{{user `openstack_identity_endpoint` }}",
+      "tenant_name": "{{user `openstack_tenant_name` }}",
+      "domain_name": "corp",
+      "username": "{{user `openstack_username` }}",
+      "password": "{{user `openstack_password` }}",
+      "image_visibility": "private",
+      "region": "iadprod",
+      "communicator": "ssh",
+      "ssh_username": "centos",
+      "ssh_pty": "true",
+      "ssh_keypair_name": "openstack vm key",
+      "ssh_private_key_file": "/root/private-key.pem",
+      "floating_ip_network": "98918566-849c-4da8-8032-3d1f7aafbc84",
+      "image_name": "Centos erver packed with software installed",
+      "source_image": "05344b13-4eb3-4232-86ee-caeb52889b70",
+      "flavor": "2",
+      "security_groups": [ "default" ],
+      "networks": ["d944718a-dc70-401b-b8cd-1f71d0e149b2"],
+      "insecure": "true"
+   }
+  ]
+}

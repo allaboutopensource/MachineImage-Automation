@@ -1,0 +1,13 @@
+---
+# tasks file for java-role
+- name: install the latest version of openjdk
+  yum:
+    name: java-11-openjdk-devel
+    state: latest
+  when: (ansible_distribution == "CentOS")
+
+- name: Install the package "openjdk"
+  apt:
+    name: openjdk-11-jre-headless
+    state: latest
+  when: (ansible_distribution == "Ubuntu")

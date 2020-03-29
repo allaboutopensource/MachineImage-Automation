@@ -1,0 +1,16 @@
+---
+# tasks file for git-rol
+- name: Install git 
+  yum:
+    name: git
+    state: latest
+  when:
+         ansible_distribution == 'CentOS'
+
+
+- name: Install git
+  apt:
+    name: git
+    state: latest
+  when:
+         ansible_distribution == 'Ubuntu' 

@@ -1,0 +1,27 @@
+---
+# tasks file for apache-role
+- name: install the latest version of Apache
+  yum:
+    name: httpd
+    state: latest
+  when: (ansible_distribution == "CentOS" or ansible_distribution == 'Red Hat Enterprise Linux')
+
+- name: Install the package "httpd"
+  apt:
+    name: apache2
+    state: latest
+  when: (ansible_distribution == "Ubuntu")
+
+- name: Make sure a service is running
+  service:
+    state: started
+    name: apache2
+    enabled: yes
+  when: (ansible_distribution == "Ubuntu")
+
+- name: Make sure a service is running
+  service:
+    state: started
+    name: httpd
+    enabled: yes
+  when: (ansible_distribution == "CentOS" or ansible_distribution == 'Red Hat Enterprise Linux')
