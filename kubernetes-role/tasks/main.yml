@@ -1,0 +1,75 @@
+---
+- 
+  name: "Disable SELinux"
+  selinux: 
+    state: disabled
+- 
+  lineinfile: 
+    line: SELINUX=disabled
+    path: /etc/selinux/config
+    regexp: ^SELINUX=
+  name: "Ensure SELinux is set to disable mode"
+- 
+  name: "Disable SWAP since kubernetes can't work with swap enabled (1/2)"
+  shell: |
+      swapoff -a
+- 
+  name: "Add kubernetes repository"
+  yum_repository: 
+    baseurl: "https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64"
+    description: "kubernetes-repo"
+    enabled: true
+    gpgcheck: true
+    repo_gpgcheck: true
+    gpgkey: https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+    name: "kubernetes-repo"
+- 
+  modprobe: 
+    name: br_netfilter
+    state: present
+  name: "Add the br_netfilter module"
+- 
+  name: "Install kubelet,kubeadm,kubectl and docker"
+  vars: 
+    packages: 
+      - kubectl
+      - kubeadm
+      - kubelet
+      - firewalld
+      - docker
+  yum: 
+    name: "{{ packages }}"
+
+-  
+   name: selinux disable in docker
+   replace:
+      replace: "selinux-enabled=false"
+      path: /etc/sysconfig/docker
+      regexp: 'selinux-enabled=false=false'
+- 
+   name: "ensure net.bridge.bridge-nf-call-iptables is set to 1"
+   sysctl:
+      name: net.bridge.bridge-nf-call-iptables
+      value: '1'
+      state: present
+- 
+   name: "Starting the services"
+   systemd: 
+     enabled: yes
+     name: "{{ item }}"
+     state: restarted
+     daemon_reload: yes
+   with_items:
+     - 'docker'
+     - 'firewalld'
+     - 'kubelet'
+-
+  name: "To add the port to the firewall"
+  firewalld:
+    permanent: true
+    port: "{{ item }}"
+    state: enabled
+  with_items:
+       - 6443/tcp
+       - 10250-10255/tcp
+       - 2379-2380/tcp

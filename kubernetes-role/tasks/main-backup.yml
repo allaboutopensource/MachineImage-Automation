@@ -1,0 +1,73 @@
+---
+# tasks file for kubernetes-role
+
+ - name: To add the port to the firewall
+   firewalld:
+    port: 6443/tcp
+    permanent: yes
+    state: enabled
+
+ - firewalld:
+     port: 10250-10255/tcp
+     permanent: yes
+     state: enabled
+
+ - firewalld:
+     port: 2379-2380/tcp
+     permanent: yes
+     state: enabled
+
+ - name: Disable SELinux
+   selinux:
+    state: disabled
+
+ - name: Ensure SELinux is set to disable mode
+   lineinfile:
+    path: /etc/selinux/config
+    regexp: '^SELINUX='
+    line: SELINUX=disabled
+
+ - name: Disable SWAP since kubernetes can't work with swap enabled (1/2)
+   shell: |
+    swapoff -a
+    echo '1' > /proc/sys/net/bridge/bridge-nf-call-iptables
+
+ - name: Add kubernetes repository
+   yum_repository:
+    name: kubernetes repo
+    description: kubernetes repo
+    baseurl: https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
+    gpgcheck: yes
+    gpgkey: https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+    enabled: yes
+
+ - name: Add the br_netfilter module
+   modprobe:
+    name: br_netfilter
+    state: present
+
+ - name: Install kubelet,kubeadm,kubectl and docker
+   yum:
+    name: "{{ packages }}"
+   vars:
+     packages:
+       - kubelet
+       - kubeadm
+       - kubectl
+       - docker
+ 
+ - name: Starting the services
+   systemd:
+       name: firewalld
+       enabled: yes
+       state: reloaded
+
+   systemd:
+       name: kubelet
+       enabled: yes
+       state: started
+
+   systemd:
+       name: docker
+       enabled: yes
+       state: started
