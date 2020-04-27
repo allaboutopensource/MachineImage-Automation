@@ -1,0 +1,36 @@
+---
+# tasks file for bigfix-role
+
+
+- name: Download bigfix client (sha256)
+  get_url:
+    url: http://software.bigfix.com/download/bes/95/BESAgent-9.5.14.73-rhe6.x86_64.rpm
+    dest: "/tmp"
+    checksum: "sha256: 7e8a8002ff02d61b7a1e7c52c483db6854cb0ad20bd679b3d33a68390e3cdf8c"
+
+- name: Installing the besagent on the client machine
+  yum:
+     name: /tmp/BESAgent-9.5.14.73-rhe6.x86_64.rpm
+     state: present
+
+- name: installing the masterhead
+  get_url: 
+    url: "http://bigfix.ellucian.com:443/masthead/masthead.afxm"
+    dest: "/tmp"
+
+-  name: Creating directory under /etc/opt
+   file:
+      path: /etc/opt//BESClient/
+      state: directory
+
+
+- name: Renaming the masterhead to actionsite.afxm
+  command: mv /tmp/masthead.afxm /etc/opt//BESClient/actionsite.afxm
+
+
+- name: Restart besclient service
+  service:
+           name: besclient
+           state: restarted
+           enabled: yes
+

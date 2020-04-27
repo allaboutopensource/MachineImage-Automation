@@ -1,0 +1,64 @@
+---
+# Task file for the prerequisites 
+
+    - name: Update the centos with the prerequisites
+      yum:
+        name: autoconf, gcc, glibc, libmcrypt-devel, make, openssl-devel, sudo, sysstat, xinetd, bc
+        state: latest
+      when:
+         ansible_distribution == 'CentOS'
+
+    - name: Update Ubuntu with the prerequisites
+      apt:
+        update_cache: yes
+        name: 
+              - autoconf
+              - gcc
+              - libc6
+              - libmcrypt-dev
+              - make 
+              - libssl-dev
+              - sudo
+              - sysstat
+              - xinetd
+              - bc
+              - gawk
+              - dc
+        state: present
+      when: ansible_distribution == 'Ubuntu'  
+
+    - name: reconfigure the packages
+      become: yes
+      become_user: root
+      command: dpkg --configure -a
+      when: 
+        ansible_distribution == 'Ubuntu'
+
+
+    - name: Download NRPE (Ubuntu 64)
+      get_url: 
+           url: http://assets.nagios.com/downloads/nagiosxi/agents/linux-nrpe-agent.tar.gz
+           dest: /tmp/
+      when: 
+           ansible_distribution == 'Ubuntu' or ansible_distribution == 'CentOS' 
+
+    - name: Unarchive a nrpe agent file
+      unarchive:
+            src: "/tmp/linux-nrpe-agent.tar.gz"
+            dest: "/tmp"
+            remote_src: yes
+
+    - name: Running the agent
+      shell: "./fullinstall -n --allowed-ips 10.0.62.10"
+      args:
+         chdir: /tmp/linux-nrpe-agent
+      register: scriptprogress
+     
+    - debug: 
+            var=scriptprogress.stdout_lines
+
+    - name: Restart xinetd service 
+      service:
+           name: xinetd
+           state: restarted
+           enabled: yes
