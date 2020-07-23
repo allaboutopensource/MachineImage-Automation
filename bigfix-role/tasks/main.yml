@@ -15,7 +15,7 @@
 
 - name: installing the masterhead
   get_url: 
-    url: "http://bigfix.ellucian.com:443/masthead/masthead.afxm"
+    url: "http://<FQDN-For-Bigfix>:443/masthead/masthead.afxm"
     dest: "/tmp"
 
 -  name: Creating directory under /etc/opt
@@ -25,7 +25,7 @@
 
 
 - name: Renaming the masterhead to actionsite.afxm
-  command: mv /tmp/masthead.afxm /etc/opt//BESClient/actionsite.afxm
+  command: mv /tmp/masthead.afxm /etc/opt/BESClient/actionsite.afxm
 
 
 - name: Restart besclient service
