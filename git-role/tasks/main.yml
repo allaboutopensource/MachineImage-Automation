@@ -1,5 +1,5 @@
 ---
-# tasks file for git-rol
+# tasks file for git-role
 - name: Install git 
   yum:
     name: git
