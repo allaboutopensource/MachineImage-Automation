@@ -1,4 +1,4 @@
-# image
+# Packer-Terraform
 Image automation using packer tool for AMI, ansible for provisioning the software and terraform for provisioning the machines.
 
 You need to have roles specified which are for particular software like java role (Installing java on the machine) that you want to install on your image.
