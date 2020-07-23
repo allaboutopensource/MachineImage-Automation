@@ -9,7 +9,7 @@
   "provisioners": [
     {
       "type": "ansible",
-      "playbook_file": "./packer-deployment/packer-automate.yml",
+      "playbook_file": "location of the packages.yml",
       "user": "centos",
       "extra_arguments": [ "-vvvv" ]
     }
@@ -25,18 +25,18 @@
       "username": "{{user `openstack_username` }}",
       "password": "{{user `openstack_password` }}",
       "image_visibility": "private",
-      "region": "iadprod",
+      "region": "us-east-1",
       "communicator": "ssh",
       "ssh_username": "centos",
       "ssh_pty": "true",
       "ssh_keypair_name": "openstack-key",
       "ssh_private_key_file": "/root/key.pem",
-      "floating_ip_network": "98918566-849c-4da8-8032-3d1f7aafbc84",
+      "floating_ip_network": "Floating-ip-pool-ID",
       "image_name": "Centos Server packed with software installed",
-      "source_image": "05344b13-4eb3-4232-86ee-caeb52889b70",
+      "source_image": "Image-ID",
       "flavor": "2",
       "security_groups": [ "default" ],
-      "networks": ["d944718a-dc70-401b-b8cd-1f71d0e149b2"],
+      "networks": ["network-ID"],
       "insecure": "true"
    }
   ]
