@@ -1,9 +1,9 @@
 {
   "variables": {
-      "openstack_identity_endpoint": "https://iadosvip01.ece.ellucian.com:5000/v3",
-      "openstack_tenant_name": "webapps-project",
-      "openstack_username": "sunilka",
-      "openstack_password": "Citrix#24041988"
+      "openstack_identity_endpoint": "<openstack-url>/v3",
+      "openstack_tenant_name": "project-name",
+      "openstack_username": "username",
+      "openstack_password": "password"
     },
 
   "provisioners": [
