@@ -13,7 +13,7 @@ resource "openstack_compute_instance_v2" "terraform-vm" {
 
   name            = "automated-vm"
   count =         2
-  image_id        = "b4889017-2028-40a3-aedd-c5a97c7de6f1"
+  image_id        = "Image-ID"
   flavor_id       = "3"
   key_pair        = "openstack-key"
   security_groups = ["default"]
